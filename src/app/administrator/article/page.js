@@ -107,11 +107,11 @@ export default function Page() {
                         </div>
                         <Table aria-label="Example table with dynamic content">
                             <TableHeader  >
-                                <TableColumn>JUDUL</TableColumn>
+                                <TableColumn className="w-8/12 md:w-auto">JUDUL</TableColumn>
                                 <TableColumn className="hidden md:table-cell">THUMBNAIL</TableColumn>
                                 <TableColumn className="hidden md:table-cell">ISI KONTEN</TableColumn>
                                 <TableColumn className="hidden md:table-cell">TANGGAL PELAKSANAAN</TableColumn>
-                                <TableColumn>ACTION</TableColumn>
+                                <TableColumn >ACTION</TableColumn>
                             </TableHeader>
                             <TableBody items={data} >
                                 {(item) => (
@@ -130,7 +130,7 @@ export default function Page() {
                                                         getKeyValue(item, column.key)
                                                     )
                                                 ) : (
-                                                    <div className="flex gap-2 justify-start md:justify-center">
+                                                    <div className="flex gap-2 justify-start ">
                                                         <Button onClick={() => handleEdit(item.id)} size="small" color="primary">
                                                             Ubah
                                                         </Button>
@@ -188,7 +188,7 @@ export default function Page() {
                                 <Button color="danger" variant="light" onPress={onClose}>
                                     Tidak
                                 </Button>
-                                <Button color="primary" onPress={() => { handleDelete(id, thumbnail) }}>
+                                <Button color="primary" onPress={() => { handleDelete(id, thumbnail); onClose() }}>
                                     Ya
                                 </Button>
                             </ModalFooter>

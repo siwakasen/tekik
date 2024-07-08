@@ -11,10 +11,8 @@ import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import { uploadFile, getFile } from '@/lib/storage';
 import { db } from "@/services/firebase/firebase";
 import { useRouter } from 'next/navigation';
-import { DatePicker } from "@nextui-org/react";
-import { CalendarDate } from '@nextui-org/react';
-import { set } from 'date-fns';
-
+import { quillModules } from '@/components/constant/constant';
+import { Spinner } from '@nextui-org/react';
 const FormPage = ({ params }) => {
     const { id } = params;
     const router = useRouter();
@@ -117,21 +115,27 @@ const FormPage = ({ params }) => {
             imageUrl = await getFile(imagePath);
         }
         const docRef = doc(db, "articles", id);
-        await updateDoc(docRef, {
-            title: title,
-            content: content,
-            thumbnail: imageUrl,
-            date: date,
-        })
-            .then(() => {
-                toast.success('Berhasil memperbarui data', {
-                    position: 'top-right',
-                });
-                router.push('/administrator/article');
+        try {
+
+            await updateDoc(docRef, {
+                title: title,
+                content: content,
+                thumbnail: imageUrl,
+                date: date,
             })
-            .finally(() => {
-                setIsLoading(false);
-            });
+                .then(() => {
+                    toast.success('Berhasil memperbarui data', {
+                        position: 'top-right',
+                    });
+                    router.push('/administrator/article');
+                })
+                .finally(() => {
+                    setIsLoading(false);
+                });
+        } catch (error) {
+            toast.error(error.message);
+            setIsLoading(false);
+        }
     };
 
     const handleSubmit = (e) => {
@@ -139,14 +143,14 @@ const FormPage = ({ params }) => {
         if (title === '') {
             toast.warning('Judul harus diisi!');
             return;
+        } else if (date === null) {
+            toast.warning('Tanggal harus diisi');
+            return;
         } else if (thumbnail === null && !thumbnailPreview) {
             toast.warning('Gambar Artikel harus diisi');
             return;
         } else if (content === '') {
             toast.warning('Isi Artikel harus diisi');
-            return;
-        } else if (date === null) {
-            toast.warning('Tanggal harus diisi');
             return;
         }
         updateArticle();
@@ -192,14 +196,21 @@ const FormPage = ({ params }) => {
                                         <div className="h-52 mb-4 mt-2">
                                             <ReactQuill
                                                 theme="snow"
-                                                onChange={(value) => setContent(value)}
-                                                placeholder="Isi Content"
-                                                className="sm:h-[80%] h-[70%]"
+                                                name="content"
+                                                id="content"
                                                 value={content}
+                                                placeholder="Isi Content"
+                                                onChange={(value) => setContent(value)}
+                                                className="sm:h-[80%] h-[70%]"
+                                                modules={quillModules}
+                                                required
                                             />
                                         </div>
                                         <Button color="primary" type="submit" className="mt-5" disabled={isLoading}>
-                                            {isLoading ? <span className="loading-spinner text-white"></span> : 'Simpan'}
+                                            {isLoading ?
+                                                <span className="loading-spinner text-white">
+                                                    <Spinner color="white" size="sm" />
+                                                </span> : 'Ubah'}
                                         </Button>
                                     </div>
                                 </form>

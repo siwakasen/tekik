@@ -2,15 +2,18 @@
 import { Input, Button, Text, Image, Card, CardHeader, Divider, CardBody } from '@nextui-org/react';
 import dynamic from 'next/dynamic';
 
-import 'react-quill/dist/quill.snow.css';
 import { useEffect, useState } from 'react';
 import NavbarAdmin from '@/components/navbar/navbar-admin';
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+import 'react-quill/dist/quill.snow.css';
 import { toast } from 'sonner';
 import { collection, addDoc } from "firebase/firestore";
 import { uploadFile, getFile } from '@/lib/storage';
 import { db } from "@/services/firebase/firebase";
 import { useRouter } from 'next/navigation';
+import { quillModules } from '@/components/constant/constant';
+import { Spinner } from '@nextui-org/react';
+
 const FormPage = () => {
     const router = useRouter();
     const [title, setTitle] = useState('');
@@ -19,6 +22,8 @@ const FormPage = () => {
     const [thumbnail, setThumbnail] = useState(null);
     const [thumbnailPreview, setThumbnailPreview] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+
+
 
     useEffect(() => {
         if (thumbnail) {
@@ -49,21 +54,26 @@ const FormPage = () => {
             const imagePath = await uploadFile(thumbnail, folder);
             imageUrl = await getFile(imagePath);
         }
-        await addDoc(collection(db, "articles"), {
-            title: title,
-            content: content,
-            thumbnail: imageUrl,
-            date: date,
-        })
-            .then(() => {
-                toast.success('Berhasil menambahkan data', {
-                    position: 'top-right',
-                });
-                router.push('/administrator/article');
+        try {
+            await addDoc(collection(db, "articles"), {
+                title: title,
+                content: content,
+                thumbnail: imageUrl,
+                date: date,
             })
-            .finally(() => {
-                setIsLoading(false);
-            });
+                .then(() => {
+                    toast.success('Berhasil menambahkan data', {
+                        position: 'top-right',
+                    });
+                    router.push('/administrator/article');
+                })
+                .finally(() => {
+                    setIsLoading(false);
+                });
+        } catch (error) {
+            toast.error(error.message);
+            setIsLoading(false);
+        }
     };
 
     const handleSubmit = (e) => {
@@ -71,14 +81,14 @@ const FormPage = () => {
         if (title === '') {
             toast.warning('Judul harus diisi!');
             return;
+        } else if (date === null) {
+            toast.warning('Tanggal harus diisi');
+            return;
         } else if (thumbnail === null) {
             toast.warning('Gambar Artikel harus diisi');
             return;
         } else if (content === '') {
             toast.warning('Isi Artikel harus diisi');
-            return;
-        } else if (date === null) {
-            toast.warning('Tanggal harus diisi');
             return;
         }
         addArticle();
@@ -112,7 +122,7 @@ const FormPage = () => {
                                         </div>
                                         <div className="flex w-full flex-col gap-4">
                                             <p className='w-full h-4 text-sm'>Tanggal Pelaksanaan<span className='text-red-500'>*</span></p>
-                                            <input type="date" className=" w-36 h-10" placeholder="Tanggal Pelaksanaan" onChange={(e) => { handleChangeDate(e) }} />
+                                            <input type="date" className=" w-36 h-10" placeholder="Tanggal Pelaksanaan" onChange={(e) => { handleChangeDate(e) }} value={date ? date : ''} />
                                         </div>
                                         <p className='w-full h-4 text-sm mt-4 mb-2'>Thumbnail <span className='text-red-500'>*</span></p>
                                         <input className='w-full h-full mb-4' type="file" accept="image/*" onChange={handleImageChange} />
@@ -123,14 +133,21 @@ const FormPage = () => {
                                         <div className="h-52 mb-4 mt-2">
                                             <ReactQuill
                                                 theme="snow"
-                                                onChange={(value) => setContent(value)}
-                                                placeholder="Isi Content"
-                                                className="sm:h-[80%] h-[70%]"
+                                                name="content"
+                                                id="content"
                                                 value={content}
+                                                placeholder="Isi Content"
+                                                onChange={(value) => setContent(value)}
+                                                className="sm:h-[80%] h-[70%]"
+                                                modules={quillModules}
+                                                required
                                             />
                                         </div>
                                         <Button color="primary" type="submit" className="mt-5" disabled={isLoading}>
-                                            {isLoading ? <span className="loading-spinner text-white"></span> : 'Tambah'}
+                                            {isLoading ?
+                                                <span className="loading-spinner text-white">
+                                                    <Spinner color="white" size="sm" />
+                                                </span> : 'Tambah'}
                                         </Button>
                                     </div>
                                 </form>
