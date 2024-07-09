@@ -1,5 +1,5 @@
 "use client"
-import AuthStateChangeProvider from "@/components/context/auth";
+import AuthStateChangeProvider from "@/components/context/authAdmin";
 
 function Layout({ children }) {
     return (

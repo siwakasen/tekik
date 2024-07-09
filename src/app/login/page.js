@@ -33,7 +33,7 @@ export default function Page() {
         const { statusCode } = await Login(email, password);
         if (statusCode === 200) {
             toast.success('Login berhasil')
-            router.push('/administrator/article');
+            router.push('/administrator/profile');
         } else {
             toast.error(GetSignInErrorMessage(statusCode));
         }

@@ -14,18 +14,14 @@ import { Logout } from "@/services/firebase/firebase";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 export default function NavbarAdmin() {
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const router = useRouter();
     const pathname = usePathname();
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const handleLogout = async () => {
         await Logout();
         router.push("/login");
     }
-    const menuItems = [
-        "Profil",
-        "Artikel",
-        "Log Out",
-    ];
+    const menuItems = ["Profil", "Artikel", "Logout"];
     return (
         <Navbar onMenuOpenChange={setIsMenuOpen}>
             <NavbarContent>
@@ -37,26 +33,40 @@ export default function NavbarAdmin() {
                     <p className="font-bold text-inherit">TEKIK</p>
                 </NavbarBrand>
             </NavbarContent>
-
             <NavbarContent className="hidden sm:flex gap-4" justify="center">
-                <NavbarItem>
-                    <Link color="foreground" href="#">
-                        Profil
-                    </Link>
-                </NavbarItem>
-                <NavbarItem isActive>
-                    <Link href="#" aria-current="page">
-                        Artikel
-                    </Link>
-                </NavbarItem>
+                {
+                    pathname == '/administrator/profile' ?
+                        <>
+                            <NavbarItem isActive>
+                                <Link href="/administrator/profile" aria-current="page">
+                                    Profil
+                                </Link>
+                            </NavbarItem>
+                            <NavbarItem >
+                                <Link color="foreground" href="/administrator/article" >
+                                    Artikel
+                                </Link>
+                            </NavbarItem>
+                        </> :
+                        <>
+                            <NavbarItem>
+                                <Link color="foreground" href="/administrator/profile">
+                                    Profil
+                                </Link>
+                            </NavbarItem>
+                            <NavbarItem isActive>
+                                <Link href="/administrator/article" aria-current="page">
+                                    Artikel
+                                </Link>
+                            </NavbarItem>
+                        </>
+                }
+
             </NavbarContent>
             <NavbarContent justify="end">
-                <NavbarItem className="hidden lg:flex">
-                    <Link href="#">Login</Link>
-                </NavbarItem>
                 <NavbarItem>
                     <Button onClick={handleLogout} color="danger" href="#" variant="flat">
-                        Log Out
+                        Log out
                     </Button>
                 </NavbarItem>
             </NavbarContent>
@@ -65,8 +75,9 @@ export default function NavbarAdmin() {
                     <NavbarMenuItem key={`${item}-${index}`}>
                         <Link
                             color={
-                                index === 1 ? "primary" : index === menuItems.length - 1 ? "danger" : "foreground"
+                                index === 0 && pathname == '/administrator/profile' ? "primary" : index === 1 && pathname === '/administrator/article' ? "primary" : index === menuItems.length - 1 ? "danger" : "foreground"
                             }
+                            onClick={index === menuItems.length - 1 ? handleLogout : index === 0 ? () => router.push('/administrator/profile') : () => router.push('/administrator/article')}
                             className="w-full"
                             href="#"
                             size="lg"
@@ -76,7 +87,6 @@ export default function NavbarAdmin() {
                     </NavbarMenuItem>
                 ))}
             </NavbarMenu>
-        </Navbar>
-
+        </Navbar >
     );
 }

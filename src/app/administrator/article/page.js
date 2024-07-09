@@ -97,11 +97,10 @@ export default function Page() {
     return (
         <main>
 
-            <div className="flex flex-col h-screen">
+            <div className="flex flex-col h-screen bg-gradient-to-br from-slate-300 via-slate-200  to-sky-300">
                 <NavbarAdmin />
-
-                <div className="flex justify-center w-full bg-gradient-to-br from-slate-300 via-slate-200  to-sky-300  h-full">
-                    <div className="w-full max-w-[1000px] px-2 py-10">
+                <div className="flex justify-center w-full   h-full">
+                    <div className="w-full max-w-screen-2xl px-2 py-10">
                         <div className="flex my-2 justify-start" >
                             <Button onClick={handleAdd} color="success" className="text-white font-semibold     " >Tambah Artikel</Button>
                         </div>
@@ -125,7 +124,7 @@ export default function Page() {
                                                     column.key === 'thumbnail' ? (
                                                         <Image src={getKeyValue(item, column.key)} alt="thumbnail" className="w-20 h-20" />
                                                     ) : column.key === 'content' ? (
-                                                        getKeyValue(item, column.key).slice(0, 30) + "..."
+                                                        getKeyValue(item, column.key).slice(0, 50) + "..."
                                                     ) : (
                                                         getKeyValue(item, column.key)
                                                     )

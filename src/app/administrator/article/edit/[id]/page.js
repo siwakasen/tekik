@@ -1,18 +1,17 @@
 "use client";
 import { Input, Button, Text, Image, Card, CardHeader, Divider, CardBody } from '@nextui-org/react';
 import dynamic from 'next/dynamic';
-
 import 'react-quill/dist/quill.snow.css';
 import { useEffect, useState } from 'react';
 import NavbarAdmin from '@/components/navbar/navbar-admin';
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 import { toast } from 'sonner';
-import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { uploadFile, getFile } from '@/lib/storage';
 import { db } from "@/services/firebase/firebase";
 import { useRouter } from 'next/navigation';
-import { quillModules } from '@/components/constant/constant';
 import { Spinner } from '@nextui-org/react';
+import { quillModules } from '@/components/constant/constant';
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 const FormPage = ({ params }) => {
     const { id } = params;
     const router = useRouter();
@@ -54,7 +53,6 @@ const FormPage = ({ params }) => {
                     setTitle(data.title);
                     setContent(data.content);
                     setThumbnailPreview(data.thumbnail);
-
                 } else {
                     toast.error('Artikel tidak ditemukan');
                     router.push('/administrator/article');
@@ -159,7 +157,7 @@ const FormPage = ({ params }) => {
     return (
         <div className='flex flex-col min-h-screen bg-gradient-to-br from-slate-300 via-slate-200 to-purple-500'>
             <NavbarAdmin />
-            <div className="h-full  py-20">
+            <div className="h-full py-20">
                 <div className="flex justify-center items-center h-full">
                     <div className="w-full max-w-[1024px] px-6 min-w-[420px]:px-6">
                         <Button color="danger" onClick={() => router.back()} className="text-white my-2 font-semibold">Kembali</Button>
