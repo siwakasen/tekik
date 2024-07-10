@@ -132,7 +132,6 @@ export default function Page() {
                             errorMessage="Email tidak valid"
                             onChange={handleChangeEmail}
                             className="my-6"
-                            ref={inputRef}
                         />
                         <Input
                             endContent={
