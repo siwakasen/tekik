@@ -17,10 +17,6 @@ export default function Page() {
     const validateEmail = (value) => value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i);
     const toggleVisibility = () => setIsVisible(!isVisible);
     const router = useRouter();
-    const inputRef = useRef(null);
-    useEffect(() => {
-        inputRef.current.focus();
-    }, []);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -83,7 +79,7 @@ export default function Page() {
                                 errorMessage="Email tidak valid"
                                 onChange={handleChangeEmail}
                                 className="my-6"
-                                ref={inputRef}
+
                                 placeholder="example@email.com"
                             />
                             <Input
