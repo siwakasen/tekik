@@ -30,6 +30,7 @@ export default function Page() {
             return;
         }
         const { statusCode } = await Login(email, password);
+        console.log(statusCode);
         if (statusCode === 200) {
             toast.success('Login berhasil')
             router.push('/administrator/profile');
@@ -121,7 +122,7 @@ export default function Page() {
                             Silahkan masukkan email dan password untuk mengakases halaman admin.
                         </p>
                     </div>
-                    <form>
+                    <form onSubmit={handleLogin}>
                         <Input
                             key={"outside"}
                             type="email"

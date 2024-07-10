@@ -8,6 +8,7 @@ import {
     signOut,
     onAuthStateChanged
 } from "firebase/auth";
+import { user } from "@nextui-org/react";
 
 const firebaseConfig = {
     apiKey: process.env.NEXT_PUBLIC_API_KEY,
@@ -28,8 +29,10 @@ export { FirebaseAuth, onAuthStateChanged };
 export const Login = async (email, password) => {
     try {
         const userCredential = await signInWithEmailAndPassword(FirebaseAuth, email, password);
+        console.log(userCredential);
         return { user: userCredential.user, statusCode: 200 };
     } catch (error) {
+        console.log(error.code);
         return { error, statusCode: error.code };
     }
 };
