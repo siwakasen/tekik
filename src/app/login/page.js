@@ -8,6 +8,7 @@ import { EyeFilledIcon } from "@/components/icon/eyeFilledIcon";
 import { EyeSlashFilledIcon } from "@/components/icon/eyeSlashFilledIcon";
 import { useRouter } from "next/navigation";
 import { toast } from 'sonner';
+import { Spinner } from "@nextui-org/react";
 export default function Page() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -16,6 +17,7 @@ export default function Page() {
     const [isVisible, setIsVisible] = useState(false);
     const validateEmail = (value) => value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i);
     const toggleVisibility = () => setIsVisible(!isVisible);
+    const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
 
     const handleLogin = async (e) => {
@@ -29,14 +31,15 @@ export default function Page() {
         if (email === '' || password === '') {
             return;
         }
+        setIsLoading(true);
         const { statusCode } = await Login(email, password);
-        console.log(statusCode);
         if (statusCode === 200) {
             toast.success('Login berhasil')
             router.push('/administrator/profile');
         } else {
             toast.error(GetSignInErrorMessage(statusCode));
         }
+        setIsLoading(false);
     }
     const handleChangeEmail = (e) => {
         setEmail(e.target.value);
@@ -104,7 +107,7 @@ export default function Page() {
                         </CardBody>
                         <Divider />
                         <CardFooter className="flex flex-col items-start pt-4 pb-5 px-6">
-                            <button className="w-full bg-blue-500 p-1 mb-4 rounded text-white" size="lg" type="submit" >
+                            <button className="w-full bg-blue-500 p-1 mb-4 rounded-xl text-white" size="lg" type="submit" >
                                 <span className="text-lg font-semibold">Login</span>
                             </button>
                             <p className="text-sm font-thin text-gray-500">Akses ke dashboard administrator</p>
@@ -155,8 +158,14 @@ export default function Page() {
 
                         />
                         <div className="flex flex-col items-start pt-4">
-                            <button className="w-20 bg-blue-500 p-1 mb-2 rounded text-white" size="lg" type="submit" >
-                                <span className="text-lg font-semibold">Login</span>
+                            <button className="w-20 bg-blue-500 p-1 mb-2 rounded-xl text-white" size="lg" type="submit" >
+                                {isLoading ?
+                                    <span className="loading-spinner text-white">
+                                        <Spinner color="white" size="sm" />
+                                    </span> : <span className="text-lg font-semibold">
+                                        Login
+                                    </span>}
+
                             </button>
                             <p className="text-sm font-thin mb-4 text-gray-500">Akses ke halaman admin</p>
                         </div>

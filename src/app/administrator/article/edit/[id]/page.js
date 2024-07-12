@@ -11,7 +11,9 @@ import { db } from "@/services/firebase/firebase";
 import { useRouter } from 'next/navigation';
 import { Spinner } from '@nextui-org/react';
 import { quillModules } from '@/components/constant/constant';
+import { MdImage } from "react-icons/md";
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+
 const FormPage = ({ params }) => {
     const { id } = params;
     const router = useRouter();
@@ -84,6 +86,7 @@ const FormPage = ({ params }) => {
     }, [id]);
 
     useEffect(() => {
+
         if (thumbnail) {
             const reader = new FileReader();
             reader.onloadend = () => {
@@ -185,11 +188,20 @@ const FormPage = ({ params }) => {
                                             <p className='w-full h-4 text-sm'>Tanggal Pelaksanaan<span className='text-red-500'>*</span></p>
                                             <input type="date" className=" w-36 h-10" placeholder="Tanggal Pelaksanaan" onChange={(e) => { handleChangeDate(e) }} value={date ? date : ''} />
                                         </div>
-                                        <p className='w-full h-4 text-sm mt-4 mb-2'>Thumbnail <span className='text-red-500'>*</span></p>
-                                        <input className='w-full h-full mb-4' type="file" accept="image/*" onChange={handleImageChange} />
-                                        {thumbnailPreview && (
-                                            <Image isZoomed src={thumbnailPreview} width='50%' alt='preview' />
-                                        )}
+                                        <label className='border-[2px] border-dashed flex justify-center items-center min-h-40 w-fit min-w-40 max-w-80 rounded-2xl'>
+                                            <input className='w-full h-full sr-only' type="file" accept="image/*" onChange={handleImageChange} />
+                                            {thumbnailPreview ? (
+                                                <Image isZoomed src={thumbnailPreview} alt='preview' className='object-cover max-h-40 max-w-80 w-full rounded-lg' />
+                                            ) :
+                                                (
+                                                    <>
+                                                        <div className='flex flex-col justify-center items-center'>
+                                                            <MdImage size={32} className='text-gray-400' />
+                                                            <p className='text-[14px] text-gray-400'>unggah thumbnail</p>
+                                                        </div>
+                                                    </>
+                                                )}
+                                        </label>
                                         <p className='w-full h-4 text-sm mt-4 '>Isi konten <span className='text-red-500'>*</span></p>
                                         <div className="h-52 mb-4 mt-2">
                                             <ReactQuill

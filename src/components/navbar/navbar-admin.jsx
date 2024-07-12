@@ -23,7 +23,7 @@ export default function NavbarAdmin() {
     }
     const menuItems = ["Profil", "Artikel", "Logout"];
     return (
-        <Navbar onMenuOpenChange={setIsMenuOpen}>
+        <Navbar onMenuOpenChange={setIsMenuOpen} className=" shadow-md shadow-slate-400">
             <NavbarContent>
                 <NavbarMenuToggle
                     aria-label={isMenuOpen ? "Close menu" : "Open menu"}
