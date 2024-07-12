@@ -125,6 +125,12 @@ export default function Page() {
                                                         <Image src={getKeyValue(item, column.key)} alt="thumbnail" className="w-20 h-20" />
                                                     ) : column.key === 'content' ? (
                                                         getKeyValue(item, column.key).slice(0, 50) + "..."
+                                                    ) : column.key === 'title' ? (
+                                                        <span className="font-bold">
+                                                            {
+                                                                getKeyValue(item, column.key)
+                                                            }
+                                                        </span>
                                                     ) : (
                                                         getKeyValue(item, column.key)
                                                     )
