@@ -21,7 +21,7 @@ export default function NavbarAdmin() {
         await Logout();
         router.push("/login");
     }
-    const menuItems = ["Profil", "Artikel", "Logout"];
+    const menuItems = ["Profil", "Berita", "Logout"];
     return (
         <Navbar onMenuOpenChange={setIsMenuOpen} className=" shadow-md shadow-slate-400">
             <NavbarContent>
@@ -38,25 +38,25 @@ export default function NavbarAdmin() {
                     pathname == '/administrator/profile' ?
                         <>
                             <NavbarItem isActive>
-                                <Link href="/administrator/profile" aria-current="page">
+                                <Link href="/administrator/profile" aria-current="page" className="text-lg">
                                     Profil
                                 </Link>
                             </NavbarItem>
                             <NavbarItem >
-                                <Link color="foreground" href="/administrator/article" >
-                                    Artikel
+                                <Link color="foreground" href="/administrator/article"  >
+                                    Berita
                                 </Link>
                             </NavbarItem>
                         </> :
                         <>
                             <NavbarItem>
-                                <Link color="foreground" href="/administrator/profile">
+                                <Link color="foreground" href="/administrator/profile" >
                                     Profil
                                 </Link>
                             </NavbarItem>
                             <NavbarItem isActive>
-                                <Link href="/administrator/article" aria-current="page">
-                                    Artikel
+                                <Link href="/administrator/article" aria-current="page" className="text-lg">
+                                    Berita
                                 </Link>
                             </NavbarItem>
                         </>

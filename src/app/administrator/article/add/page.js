@@ -13,6 +13,9 @@ import { db } from "@/services/firebase/firebase";
 import { useRouter } from 'next/navigation';
 import { quillModules } from '@/components/constant/constant';
 import { Spinner } from '@nextui-org/react';
+import { MdClose } from "react-icons/md";
+import { ref, deleteObject } from 'firebase/storage';
+import { arrayRemove, updateDoc, doc } from 'firebase/firestore';
 
 const FormPage = () => {
     const router = useRouter();
@@ -22,8 +25,9 @@ const FormPage = () => {
     const [thumbnail, setThumbnail] = useState(null);
     const [thumbnailPreview, setThumbnailPreview] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-
-
+    const [lampiranPreview, setLampiranPreview] = useState([]);
+    const [lampiran, setLampiran] = useState([]);
+    const [inputCount, setInputCount] = useState(1);
 
     useEffect(() => {
         if (thumbnail) {
@@ -44,27 +48,53 @@ const FormPage = () => {
     const handleChangeDate = (e) => {
         setDate(e.target.value);
     };
+    const handleChangeLampiran = (e, index) => {
+        const files = Array.from(e.target.files);
+        const newThumbnailsPreview = files.map(file => URL.createObjectURL(file));
 
+        setLampiranPreview(prev => {
+            const updatedPreviews = [...prev];
+            updatedPreviews[index] = newThumbnailsPreview[0];
+            return updatedPreviews;
+        });
+
+        setLampiran(prev => {
+            const updatedFiles = [...prev];
+            updatedFiles[index] = files[0];
+            return updatedFiles;
+        });
+        if (index === inputCount - 1) {
+            setInputCount(inputCount + 1);
+        }
+    };
 
     const addArticle = async () => {
         setIsLoading(true);
         let imageUrl = '';
-        if (thumbnail) {
-            const folder = 'article/';
-            const imagePath = await uploadFile(thumbnail, folder);
-            imageUrl = await getFile(imagePath);
-        }
         try {
+            if (thumbnail) {
+                const folder = 'article/';
+                const imagePath = await uploadFile(thumbnail, folder);
+                imageUrl = await getFile(imagePath);
+            }
+
+            let lampiranUrl = [];
+            console.log(lampiran);
+            for (let i = 0; i < lampiran.length; i++) {
+                const folder = 'attachment/';
+                const imagePath = await uploadFile(lampiran[i], folder);
+                const url = await getFile(imagePath);
+                lampiranUrl.push(url);
+            }
             await addDoc(collection(db, "articles"), {
                 title: title,
                 content: content,
                 thumbnail: imageUrl,
                 date: date,
+                lampiran: lampiranUrl
             })
                 .then(() => {
-                    toast.success('Berhasil menambahkan data', {
-                        position: 'top-right',
-                    });
+                    toast.success('Berhasil menambahkan data');
                     router.push('/administrator/article');
                 })
                 .finally(() => {
@@ -90,9 +120,23 @@ const FormPage = () => {
         } else if (content === '') {
             toast.warning('Isi Artikel harus diisi');
             return;
+        } else if (lampiran.length === 0) {
+            toast.warning('Lampiran harus diisi');
         }
         addArticle();
     }
+
+    const handleImageDelete = async (data) => {
+        setInputCount(inputCount - 1);
+        setLampiran(prev => {
+            const updatedFiles = prev.filter(item => item !== data);
+            return updatedFiles;
+        });
+        setLampiranPreview(prev => {
+            const updatedPreviews = prev.filter(item => item !== data);
+            return updatedPreviews;
+        });
+    };
 
     return (
         <div className='flex flex-col min-h-screen bg-gradient-to-br from-slate-300 via-slate-200 to-purple-500'>
@@ -124,20 +168,59 @@ const FormPage = () => {
                                             <p className='w-full h-4 text-sm'>Tanggal Pelaksanaan<span className='text-red-500'>*</span></p>
                                             <input type="date" className=" w-full h-10 rounded-md bg-gray-100 text-gray-600" placeholder="Tanggal Pelaksanaan" onChange={(e) => { handleChangeDate(e) }} value={date ? date : ''} />
                                         </div>
-                                        <label className='border-[2px] border-dashed flex justify-center items-center min-h-40 w-fit min-w-40 max-w-80 rounded-2xl'>
-                                            <input className='w-full h-full sr-only' type="file" accept="image/*" onChange={handleImageChange} />
-                                            {thumbnailPreview ? (
-                                                <Image isZoomed src={thumbnailPreview} alt='preview' className='object-cover max-h-40 max-w-80 w-full rounded-lg' />
-                                            ) :
-                                                (
-                                                    <>
-                                                        <div className='flex flex-col justify-center items-center'>
-                                                            <MdImage size={32} className='text-gray-400' />
-                                                            <p className='text-[14px] text-gray-400'>unggah thumbnail</p>
+                                        <div className='w-full md:bg-slate-100 p-2'>
+                                            <label className='border-[2px] border-dashed border-stone-300 p-2 flex justify-center items-center min-h-40 w-fit min-w-40 max-w-80 rounded-2xl '>
+                                                <input className='w-full h-full sr-only' type="file" accept="image/*" onChange={handleImageChange} />
+                                                {thumbnailPreview ? (
+                                                    <Image isZoomed src={thumbnailPreview} alt='preview' className='object-cover max-h-40 max-w-80 w-full rounded-lg' />
+                                                ) :
+                                                    (
+                                                        <>
+                                                            <div className='flex flex-col justify-center items-center'>
+                                                                <MdImage size={32} className='text-gray-400' />
+                                                                <p className='text-[14px] text-gray-400'>Unggah thumbnail</p>
+                                                            </div>
+                                                        </>
+                                                    )}
+                                            </label>
+                                        </div>
+                                        <p className='w-full h-4 text-sm my-4 '>Lampiran<span className='text-red-500'>*</span></p>
+                                        <div className="flex flex-wrap  rounded-md md:bg-slate-100">
+                                            {Array.from({ length: inputCount }).map((_, index) => (
+                                                <label key={index} className='border-[2px] border-dashed border-stone-300 flex flex-col justify-center items-center min-h-40 w-fit min-w-40 max-w-80 rounded-2xl p-2 m-2'>
+                                                    {lampiranPreview[index] ? (
+                                                        <div className='relative'>
+                                                            <Image
+                                                                isZoomed
+                                                                src={lampiranPreview[index]}
+                                                                alt={`preview-${index}`}
+                                                                className='object-cover max-h-40 max-w-80 w-full rounded-lg'
+
+                                                            />
+                                                            <MdClose
+                                                                size={24}
+                                                                className='z-50 absolute top-2 right-2 text-gray-600 cursor-pointer rounded-full bg-slate-100 bg-opacity-50 w-5 h-5'
+                                                                onClick={() => handleImageDelete(lampiranPreview[index])}
+                                                            />
                                                         </div>
-                                                    </>
-                                                )}
-                                        </label>
+
+                                                    ) : (
+                                                        <div className='flex flex-col justify-center items-center w-full'>
+                                                            <input
+                                                                className='w-full h-full sr-only '
+                                                                type="file"
+                                                                accept="image/*"
+                                                                onChange={(e) => handleChangeLampiran(e, index)}
+
+                                                            />
+                                                            <MdImage size={32} className='text-gray-400' />
+                                                            <p className='text-[14px] text-gray-400'>Tambahkan lampiran</p>
+                                                        </div>
+                                                    )
+                                                    }
+                                                </label>
+                                            ))}
+                                        </div>
                                         <p className='w-full h-4 text-sm mt-4 '>Isi konten <span className='text-red-500'>*</span></p>
                                         <div className="h-52 mb-4 mt-2">
                                             <ReactQuill

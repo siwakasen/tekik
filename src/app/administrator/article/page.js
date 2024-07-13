@@ -30,6 +30,7 @@ export default function Page() {
     const [data, setData] = useState([]);
     const [id, setID] = useState(null);
     const [thumbnail, setThumbnail] = useState(null);
+    const [lampiran, setLampiran] = useState([]);
     const q = collection(db, "articles");
     const router = useRouter();
 
@@ -45,13 +46,16 @@ export default function Page() {
             console.error('Error deleting file:', error);
         }
     }
-    const handleDelete = async (id, thumbnail) => {
+    const handleDelete = async (id, thumbnail, lampiran) => {
+
         await deleteDoc(doc(db, "articles", id)).then(() => {
             toast.success("Data berhasil dihapus");
             fetchData();
         });
         await deleteFile(thumbnail);
-        console.log(id, thumbnail);
+        lampiran.map(async (item) => {
+            await deleteFile(item);
+        })
         setLoading(!loading);
     }
 
@@ -62,10 +66,11 @@ export default function Page() {
     const handleEdit = (id) => {
         router.push(`/administrator/article/edit/${id}`);
     }
-    const handleOpen = (id, thumbnail) => {
+    const handleOpen = (id, thumbnail, lampiran) => {
         onOpen();
         setID(id);
         setThumbnail(thumbnail);
+        setLampiran(lampiran);
     }
 
     const columns = [
@@ -102,7 +107,7 @@ export default function Page() {
                 <div className="flex justify-center w-full   h-full">
                     <div className="w-full max-w-screen-2xl px-2 py-10">
                         <div className="flex my-2 justify-start" >
-                            <Button onClick={handleAdd} color="success" className="text-white font-semibold     " >Tambah Artikel</Button>
+                            <Button onClick={handleAdd} color="success" className="text-white font-semibold     " >Tambah</Button>
                         </div>
                         <Table aria-label="Example table with dynamic content">
                             <TableHeader  >
@@ -139,7 +144,7 @@ export default function Page() {
                                                         <Button onClick={() => handleEdit(item.id)} size="small" color="primary">
                                                             Ubah
                                                         </Button>
-                                                        <Button size="small" color="danger" onClick={() => { handleOpen(item.id, item.thumbnail) }}>
+                                                        <Button size="small" color="danger" onClick={() => { handleOpen(item.id, item.thumbnail, item.lampiran) }}>
                                                             Hapus
                                                         </Button>
                                                     </div>
@@ -193,7 +198,7 @@ export default function Page() {
                                 <Button color="danger" variant="light" onPress={onClose}>
                                     Tidak
                                 </Button>
-                                <Button color="primary" onPress={() => { handleDelete(id, thumbnail); onClose() }}>
+                                <Button color="primary" onPress={() => { handleDelete(id, thumbnail, lampiran); onClose() }}>
                                     Ya
                                 </Button>
                             </ModalFooter>

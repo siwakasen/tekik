@@ -2,25 +2,28 @@
 import dynamic from 'next/dynamic';
 import NavbarAdmin from "@/components/navbar/navbar-admin";
 import { useState, useEffect } from "react";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, arrayRemove } from "firebase/firestore";
 import { db } from "@/services/firebase/firebase";
 import { Button, Spinner, Image } from '@nextui-org/react';
 import { quillModules } from '@/components/constant/constant';
 import 'react-quill/dist/quill.snow.css';
 import { toast } from 'sonner';
-import { MdImage } from "react-icons/md";
+import { MdImage, MdClose } from "react-icons/md";
 import { getFile, uploadFile } from '@/lib/storage';
-import { set } from 'date-fns';
+import { storage } from '@/services/firebase/firebase';
+import { ref, deleteObject } from 'firebase/storage';
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 export default function Page() {
     const [loading, setLoading] = useState(true);
+
     const [isLoading, setIsLoading] = useState(false);
     const [data, setData] = useState({});
     const [strukturOrganisasiPreview, setStrukturOrganisasiPreview] = useState([]);
     const [strukturOrganisasi, setStrukturOrganisasi] = useState([]);
     const [inputCount, setInputCount] = useState(1);
+    const docRef = doc(db, "profile", process.env.NEXT_PUBLIC_PROFILE_ID);
 
     const handleImageChange = (e, index) => {
         const files = Array.from(e.target.files);
@@ -37,11 +40,45 @@ export default function Page() {
             updatedFiles[index] = files[0];
             return updatedFiles;
         });
+        if (index === inputCount - 1) {
+            setInputCount(inputCount + 1);
+        }
+    };
+    async function deleteFile(filePath) {
+        const fileRef = ref(storage, filePath);
+        try {
+            await deleteObject(fileRef);
+        } catch (error) {
+            console.error('Error deleting file:', error);
+        }
+    }
+    const handleImageDelete = async (data) => {
 
-        setInputCount(inputCount + 1);
+        if (data.includes('blob')) {
+            setInputCount(inputCount - 1);
+            setStrukturOrganisasi(prev => {
+                const updatedFiles = prev.filter(item => item !== data);
+                return updatedFiles;
+            });
+            setStrukturOrganisasiPreview(prev => {
+                const updatedPreviews = prev.filter(item => item !== data);
+                return updatedPreviews;
+            });
+
+        } else {
+            const docRef = doc(db, "profile", process.env.NEXT_PUBLIC_PROFILE_ID);
+            try {
+                await updateDoc(docRef, {
+                    strukturOrganisasi: arrayRemove(data)
+                });
+                await deleteFile(data);
+            } catch (error) {
+                console.error("Error deleting item: ", error);
+            }
+            setLoading(!loading);
+        }
     };
 
-    const docRef = doc(db, "profile", process.env.NEXT_PUBLIC_PROFILE_ID);
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -122,26 +159,37 @@ export default function Page() {
                             <div className="flex flex-wrap mx-8 rounded-md md:bg-slate-100">
                                 {Array.from({ length: inputCount }).map((_, index) => (
                                     <label key={index} className='border-[2px] border-dashed border-stone-300 flex flex-col justify-center items-center min-h-40 w-fit min-w-40 max-w-80 rounded-2xl p-2 m-2'>
-                                        <input
-                                            className='w-full h-full sr-only'
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={(e) => handleImageChange(e, index)}
-                                        />
                                         {strukturOrganisasiPreview[index] ? (
-                                            <Image
-                                                isZoomed
-                                                src={strukturOrganisasiPreview[index]}
-                                                alt={`preview-${index}`}
-                                                className='object-cover max-h-40 max-w-80 w-full rounded-lg'
-                                            />
+                                            <div className='relative'>
+                                                <Image
+                                                    isZoomed
+                                                    src={strukturOrganisasiPreview[index]}
+                                                    alt={`preview-${index}`}
+                                                    className='object-cover max-h-40 max-w-80 w-full rounded-lg'
+
+                                                />
+                                                <MdClose
+                                                    size={24}
+                                                    className='z-50 absolute top-2 right-2 text-gray-600 cursor-pointer rounded-full bg-slate-100 bg-opacity-50 w-5 h-5'
+                                                    onClick={() => handleImageDelete(strukturOrganisasiPreview[index])}
+                                                />
+                                            </div>
+
                                         ) : (
                                             <div className='flex flex-col justify-center items-center w-full'>
+                                                <input
+                                                    className='w-full h-full sr-only '
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={(e) => handleImageChange(e, index)}
+
+                                                />
                                                 <MdImage size={32} className='text-gray-400' />
                                                 <p className='text-[14px] text-gray-400'>Tambahkan</p>
                                                 <p className='text-[14px] text-gray-400'>struktur organisasi</p>
                                             </div>
-                                        )}
+                                        )
+                                        }
                                     </label>
                                 ))}
                             </div>

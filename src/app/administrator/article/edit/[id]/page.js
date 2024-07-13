@@ -11,7 +11,10 @@ import { db } from "@/services/firebase/firebase";
 import { useRouter } from 'next/navigation';
 import { Spinner } from '@nextui-org/react';
 import { quillModules } from '@/components/constant/constant';
-import { MdImage } from "react-icons/md";
+import { MdImage, MdClose } from "react-icons/md";
+import { ref, deleteObject } from 'firebase/storage';
+import { arrayRemove } from 'firebase/firestore';
+import { storage } from '@/services/firebase/firebase';
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 const FormPage = ({ params }) => {
@@ -23,6 +26,10 @@ const FormPage = ({ params }) => {
     const [thumbnail, setThumbnail] = useState(null);
     const [thumbnailPreview, setThumbnailPreview] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [lampiranPreview, setLampiranPreview] = useState([]);
+    const [lampiran, setLampiran] = useState([]);
+    const [inputCount, setInputCount] = useState(1);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchArticle = async () => {
@@ -34,48 +41,10 @@ const FormPage = ({ params }) => {
                     setTitle(data.title);
                     setContent(data.content);
                     setThumbnailPreview(data.thumbnail);
-
-                } else {
-                    toast.error('Artikel tidak ditemukan');
-                    router.push('/administrator/article');
-                }
-            }
-        };
-        fetchArticle();
-    }, [id]);
-
-
-    useEffect(() => {
-        const fetchArticle = async () => {
-            if (id) {
-                const docRef = doc(db, "articles", id);
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    setTitle(data.title);
-                    setContent(data.content);
-                    setThumbnailPreview(data.thumbnail);
-                } else {
-                    toast.error('Artikel tidak ditemukan');
-                    router.push('/administrator/article');
-                }
-            }
-        };
-        fetchArticle();
-    }, [id]);
-
-
-    useEffect(() => {
-        const fetchArticle = async () => {
-            if (id) {
-                const docRef = doc(db, "articles", id);
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    setTitle(data.title);
-                    setContent(data.content);
-                    setThumbnailPreview(data.thumbnail);
+                    setLampiranPreview(data.lampiran);
+                    setLampiran(data.lampiran);
                     setDate(data.date);
+                    setInputCount(data.lampiran.length + 1);
                 } else {
                     toast.error('Artikel tidak ditemukan');
                     router.push('/administrator/article');
@@ -83,7 +52,8 @@ const FormPage = ({ params }) => {
             }
         };
         fetchArticle();
-    }, [id]);
+    }, [id, loading]);
+
 
     useEffect(() => {
 
@@ -110,24 +80,31 @@ const FormPage = ({ params }) => {
     const updateArticle = async () => {
         setIsLoading(true);
         let imageUrl = thumbnailPreview;
-        if (thumbnail) {
-            const folder = 'article/';
-            const imagePath = await uploadFile(thumbnail, folder);
-            imageUrl = await getFile(imagePath);
-        }
-        const docRef = doc(db, "articles", id);
         try {
-
+            if (thumbnail) {
+                const folder = 'article/';
+                const imagePath = await uploadFile(thumbnail, folder);
+                imageUrl = await getFile(imagePath);
+            }
+            let lampiranUrl = lampiran || [];
+            for (let i = 0; i < lampiranPreview.length; i++) {
+                if (lampiranPreview[i].includes('blob')) {
+                    const folder = 'attachment/';
+                    const imagePath = await uploadFile(lampiran[i], folder);
+                    const url = await getFile(imagePath);
+                    lampiranUrl[i] = url;
+                }
+            }
+            const docRef = doc(db, "articles", id);
             await updateDoc(docRef, {
                 title: title,
                 content: content,
                 thumbnail: imageUrl,
                 date: date,
+                lampiran: lampiranUrl
             })
                 .then(() => {
-                    toast.success('Berhasil memperbarui data', {
-                        position: 'top-right',
-                    });
+                    toast.success('Berhasil memperbarui data');
                     router.push('/administrator/article');
                 })
                 .finally(() => {
@@ -153,9 +130,67 @@ const FormPage = ({ params }) => {
         } else if (content === '') {
             toast.warning('Isi Artikel harus diisi');
             return;
+        } else if (lampiran.length === 0) {
+            toast.warning('Lampiran harus diisi');
+            return;
         }
         updateArticle();
     }
+    const handleChangeLampiran = (e, index) => {
+        const files = Array.from(e.target.files);
+        const newThumbnailsPreview = files.map(file => URL.createObjectURL(file));
+
+        setLampiranPreview(prev => {
+            const updatedPreviews = [...prev];
+            updatedPreviews[index] = newThumbnailsPreview[0];
+            return updatedPreviews;
+        });
+
+        setLampiran(prev => {
+            const updatedFiles = [...prev];
+            updatedFiles[index] = files[0];
+            return updatedFiles;
+        });
+        if (index === inputCount - 1) {
+            setInputCount(inputCount + 1);
+        }
+    };
+    async function deleteFile(filePath) {
+        const fileRef = ref(storage, filePath);
+        try {
+            await deleteObject(fileRef);
+        } catch (error) {
+            console.error('Error deleting file:', error);
+        }
+    }
+
+    const handleImageDelete = async (data) => {
+        if (data.includes('blob')) {
+            setInputCount(inputCount - 1);
+            setLampiran(prev => {
+                const updatedFiles = prev.filter(item => item !== data);
+                return updatedFiles;
+            });
+            setLampiranPreview(prev => {
+                const updatedPreviews = prev.filter(item => item !== data);
+                return updatedPreviews;
+            });
+
+        } else {
+
+            const docRef = doc(db, "articles", id);
+            try {
+                await updateDoc(docRef, {
+                    lampiran: arrayRemove(data)
+                });
+                await deleteFile(data);
+            } catch (error) {
+                console.error("Error deleting item: ", error);
+            }
+            setLoading(!loading);
+        }
+    };
+
 
     return (
         <div className='flex flex-col min-h-screen bg-gradient-to-br from-slate-300 via-slate-200 to-purple-500'>
@@ -166,7 +201,7 @@ const FormPage = ({ params }) => {
                         <Button color="danger" onClick={() => router.back()} className="text-white my-2 font-semibold">Kembali</Button>
                         <Card>
                             <CardHeader>
-                                <p className="text-medium">Ubah Artikel</p>
+                                <p className="text-xl font-bold">Ubah Data</p>
                             </CardHeader>
                             <Divider />
                             <CardBody>
@@ -188,20 +223,59 @@ const FormPage = ({ params }) => {
                                             <p className='w-full h-4 text-sm'>Tanggal Pelaksanaan<span className='text-red-500'>*</span></p>
                                             <input type="date" className=" w-36 h-10" placeholder="Tanggal Pelaksanaan" onChange={(e) => { handleChangeDate(e) }} value={date ? date : ''} />
                                         </div>
-                                        <label className='border-[2px] border-dashed flex justify-center items-center min-h-40 w-fit min-w-40 max-w-80 rounded-2xl'>
-                                            <input className='w-full h-full sr-only' type="file" accept="image/*" onChange={handleImageChange} />
-                                            {thumbnailPreview ? (
-                                                <Image isZoomed src={thumbnailPreview} alt='preview' className='object-cover max-h-40 max-w-80 w-full rounded-lg' />
-                                            ) :
-                                                (
-                                                    <>
-                                                        <div className='flex flex-col justify-center items-center'>
-                                                            <MdImage size={32} className='text-gray-400' />
-                                                            <p className='text-[14px] text-gray-400'>unggah thumbnail</p>
+                                        <div className='w-full md:bg-slate-100 p-2'>
+                                            <label className='border-[2px] border-dashed border-stone-300 p-2 flex justify-center items-center min-h-40 w-fit min-w-40 max-w-80 rounded-2xl '>
+                                                <input className='w-full h-full sr-only' type="file" accept="image/*" onChange={handleImageChange} />
+                                                {thumbnailPreview ? (
+                                                    <Image isZoomed src={thumbnailPreview} alt='preview' className='object-cover max-h-40 max-w-80 w-full rounded-lg' />
+                                                ) :
+                                                    (
+                                                        <>
+                                                            <div className='flex flex-col justify-center items-center'>
+                                                                <MdImage size={32} className='text-gray-400' />
+                                                                <p className='text-[14px] text-gray-400'>Unggah thumbnail</p>
+                                                            </div>
+                                                        </>
+                                                    )}
+                                            </label>
+                                        </div>
+                                        <p className='w-full h-4 text-sm my-4 '>Lampiran<span className='text-red-500'>*</span></p>
+                                        <div className="flex flex-wrap  rounded-md md:bg-slate-100">
+                                            {Array.from({ length: inputCount }).map((_, index) => (
+                                                <label key={index} className='border-[2px] border-dashed border-stone-300 flex flex-col justify-center items-center min-h-40 w-fit min-w-40 max-w-80 rounded-2xl p-2 m-2'>
+                                                    {lampiranPreview[index] ? (
+                                                        <div className='relative'>
+                                                            <Image
+                                                                isZoomed
+                                                                src={lampiranPreview[index]}
+                                                                alt={`preview-${index}`}
+                                                                className='object-cover max-h-40 max-w-80 w-full rounded-lg'
+
+                                                            />
+                                                            <MdClose
+                                                                size={24}
+                                                                className='z-50 absolute top-2 right-2 text-gray-600 cursor-pointer rounded-full bg-slate-100 bg-opacity-50 w-5 h-5'
+                                                                onClick={() => handleImageDelete(lampiranPreview[index])}
+                                                            />
                                                         </div>
-                                                    </>
-                                                )}
-                                        </label>
+
+                                                    ) : (
+                                                        <div className='flex flex-col justify-center items-center w-full'>
+                                                            <input
+                                                                className='w-full h-full sr-only '
+                                                                type="file"
+                                                                accept="image/*"
+                                                                onChange={(e) => handleChangeLampiran(e, index)}
+
+                                                            />
+                                                            <MdImage size={32} className='text-gray-400' />
+                                                            <p className='text-[14px] text-gray-400'>Tambahkan lampiran</p>
+                                                        </div>
+                                                    )
+                                                    }
+                                                </label>
+                                            ))}
+                                        </div>
                                         <p className='w-full h-4 text-sm mt-4 '>Isi konten <span className='text-red-500'>*</span></p>
                                         <div className="h-52 mb-4 mt-2">
                                             <ReactQuill
