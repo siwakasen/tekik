@@ -141,10 +141,10 @@ const FormPage = () => {
     return (
         <div className='flex flex-col min-h-screen bg-gradient-to-br from-slate-300 via-slate-200 to-purple-500'>
             <NavbarAdmin />
-            <div className="h-full  py-20">
-                <div className="flex justify-center items-center h-full">
+            <div className=" py-20">
+                <div className="flex justify-center items-center ">
                     <div className="w-full mt-4 max-w-[1024px] px-6 min-w-[420px]:px-6">
-                        <Card>
+                        <Card >
                             <CardHeader>
                                 <p className="text-medium">Tambah Artikel</p>
                             </CardHeader>
