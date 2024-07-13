@@ -149,7 +149,7 @@ const FormPage = () => {
                                 <p className="text-medium">Tambah Artikel</p>
                             </CardHeader>
                             <Divider />
-                            <CardBody className='overscroll-y-none'>
+                            <CardBody className='overscroll-y-none h-full'>
                                 <form onSubmit={handleSubmit}>
                                     <div className="">
                                         <div className='my-4'>
