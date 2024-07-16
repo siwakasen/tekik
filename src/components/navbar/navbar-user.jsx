@@ -16,9 +16,9 @@ export default function NavbarUser() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const router = useRouter();
     const pathname = usePathname();
-    const menuItems = ["Profil", "Berita"];
+    const menuItems = ["PROFIL", "BERITA"];
     return (
-        <Navbar onMenuOpenChange={setIsMenuOpen} className="bg-slate-100">
+        <Navbar onMenuOpenChange={setIsMenuOpen} className="absolute">
             <NavbarContent>
                 <NavbarMenuToggle
                     aria-label={isMenuOpen ? "Close menu" : "Open menu"}
@@ -26,7 +26,7 @@ export default function NavbarUser() {
                 />
                 <NavbarBrand>
                     <Link href="/" color="foreground">
-                        <p className="font-bold text-inherit">TEKIK</p>
+                        <p className="font-bold text-inherit text-lg">TEKIK</p>
                     </Link>
                 </NavbarBrand>
             </NavbarContent>
@@ -34,11 +34,9 @@ export default function NavbarUser() {
                 {menuItems.map((item, index) => (
                     <NavbarItem key={`${item}-${index}`}>
                         <Link
-                            color={
-                                index === 0 && pathname == '/profil' ? "primary" : index === 1 && pathname === '/berita' ? "primary" : index === menuItems.length - 1 ? "foreground" : "foreground"
-                            }
                             onClick={() => { index === 0 ? router.push('/profil') : router.push('/berita') }}
                             href="#"
+                            className="font-semibold text-green-800"
                         >
                             {item}
                         </Link>
@@ -50,12 +48,13 @@ export default function NavbarUser() {
                     <NavbarMenuItem key={`${item}-${index}`}>
                         <Link
                             color={
-                                index === 0 && pathname == '/profile' ? "primary" : index === 1 && pathname === '/article' ? "primary" : index === menuItems.length - 1 ? "foreground" : "foreground"
+                                index === 0 && pathname == '/profil' ? "success" : index === 1 && pathname === '/berita' ? "success" : index === menuItems.length - 1 ? "foreground" : "foreground"
                             }
-                            className="w-full"
+                            className="w-full  text-sm text-green-800"
                             onClick={() => { index === 0 ? router.push('/profil') : router.push('/berita') }}
                             size="lg"
                             href="#"
+
                         >
                             {item}
                         </Link>

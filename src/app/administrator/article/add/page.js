@@ -144,12 +144,12 @@ const FormPage = () => {
             <div className="h-full py-20">
                 <div className="flex justify-center items-center h-full">
                     <div className="w-full mt-4 max-w-[1024px] px-6 min-w-[420px]:px-6">
-                        <Card>
+                        <Card >
                             <CardHeader>
                                 <p className="text-medium">Tambah Artikel</p>
                             </CardHeader>
                             <Divider />
-                            <CardBody className='overscroll-y-none h-full'>
+                            <CardBody className=' h-full' >
                                 <form onSubmit={handleSubmit}>
                                     <div className="">
                                         <div className='my-4'>
