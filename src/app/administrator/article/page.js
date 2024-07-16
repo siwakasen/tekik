@@ -36,8 +36,10 @@ export default function Page() {
 
     const fetchData = async () => {
         const querySnapshot = await getDocs(q);
+        console.log(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
         setData(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     }
+
     async function deleteFile(filePath) {
         const fileRef = ref(storage, filePath);
         try {

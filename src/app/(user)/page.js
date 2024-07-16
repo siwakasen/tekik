@@ -2,24 +2,145 @@
 
 import Image from "next/image"
 import Nature from "@/images/nature.jpg"
+import { MdDateRange } from "react-icons/md";
+import { collection, getDocs, doc } from "firebase/firestore";
+import { db } from "@/services/firebase/firebase";
+import { useEffect, useState } from "react";
+import DOMPurify from "dompurify";
+import { Link } from "@nextui-org/react";
 
 export default function Page() {
+    const q = collection(db, "articles");
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const fetchData = async () => {
+        const querySnapshot = await getDocs(q);
+        console.log(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+        setData(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+        setLoading(false);
+    }
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
     return (
         <>
             <div className="h-screen relative">
                 <Image src={Nature} layout="fill" objectFit="cover" alt="dashboard" />
-                <div className="absolute inset-0 bg-black opacity-20"></div> {/* Dark overlay */}
+                <div className="absolute inset-0 bg-black opacity-20"></div>
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white "></div>
-                <div className="absolute inset-0 flex justify-center items-center">
-                    <p className="text-white text-8xl font-bold" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)' }}>
-                        SELAMAT DATANG
+                <div className="absolute inset-0 flex flex-col justify-center items-center">
+                    <p className="text-white text-xl lg:text-2xl my-6  font-bold text-center" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)' }}>
+                        Selamat datang di website
+                    </p>
+                    <p className="text-white text-4xl sm:text-5xl md:text-7xl mx-4 lg:text-8xl font-bold text-center" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)' }}>
+                        PADUKUHAN TEKIK
+                    </p>
+                    <p className="text-white text-xl lg:text-2xl my-6 font-bold text-center" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)' }}>
+                        Kalurahan Nglindur, Kapanewon Girisubo, Kabupaten Gunung Kidul
                     </p>
                 </div>
             </div>
-            <div className="container mx-auto mt-10 px-4 py-8 flex flex-col justify-center items-center">
-                <p className="text-4xl text-green-800 mt-4 font-bold">Padukuhan Tekik</p>
-                <p className="text-xl text-green-800 mt-4 w-1/3 flex items-center justify-center px-10">Nglindur, Kecamatan Girisubo, Kabupaten Gunung Kidul, Daerah Istimewa Yogyakarta, Indonesia</p>
-            </div>
+            <div className="h-full max-w-5xl mt-24 mx-auto ">
+                <div className="mx-4 sm:mx-auto max-w-screen-xl mb-24  sm:mb-48 ">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 self-center">
+                        <div className="px-4">
+                            <p className="text-4xl sm:text-6xl text-green-800 my-4 font-bold">
+                                Sekilas Mengenai Tekik
+                            </p>
+                            <p className="text-xl sm:text-3xl text-gray-600 leading-relaxed font-normal">
+                                Tekik terletak di Kalurahan Nglindur, Kapanewon Girisubo, Kabupaten Gunung Kidul. Tekik adalah dusun yang memiliki potensi desa yang cukup besar. Dengan kerjasama antar warga yang baik, dusun ini diharapkan dapat terus berkembang dan meningkatkan taraf hidup masyarakatnya.
+                            </p>
+                        </div>
+                        <div className="w-full flex  justify-center">
+                            <div className="relative flex justify-center items-center w-[350px] h-[350px] sm:w-[400px] sm:h-[400px] sm:ml-16 ">
+                                <div className=" absolute top-[80px] sm:left-[80px] left-4 w-full sm:w-[600px] sm:max-w-[600px] overflow-hidden h-[350px] sm:h-[540px] bg-green-100 z-0"></div>
+                                <Image src={Nature} layout="fill" objectFit="cover" alt="dashboard" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 mb-10 mx-auto gap-4">
+                    <div className="flex flex-col rounded-lg bg-green-50 px-auto py-8 text-center">
+                        <p className="text-center text-green-600 text-4xl font-extrabold">
+                            1
+                        </p>
+                        <p className="text-center text-gray-500 font-medium text-lg">
+                            Jumlah RW
+                        </p>
+                    </div>
+                    <div className="flex flex-col rounded-lg bg-green-50 px-auto py-8 text-center">
+                        <p className="text-center text-green-600 text-4xl font-extrabold">
+                            2
+                        </p>
+                        <p className="text-center text-gray-500 font-medium text-lg">
+                            Jumlah RT
+                        </p>
+                    </div>
+                    <div className="flex flex-col rounded-lg bg-green-50 px-auto py-8 text-center">
+                        <p className="text-center text-green-600 text-4xl font-extrabold">
+                            90
+                        </p>
+                        <p className="text-center text-gray-500 font-medium text-lg">
+                            Jumlah Penduduk
+                        </p>
+                    </div>
+                </div>
+                <div className="h-24"></div>
+                <div className="m-5">
+                    <div className="w-full">
+                        <p className="text-3xl sm:text-4xl text-green-800 mb-6  text-center font-bold">BERITA TERKINI</p>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 rounded-lg">
+                        {loading ? (
+                            [0, 1, 2].map((item) => (
+                                <div key={item} className="w-full rounded-lg bg-gray-100 animate-pulse">
+                                    <div className="rounded-t-md w-full aspect-[16/9] bg-gray-300"></div>
+                                    <div className="p-2">
+                                        <div className="pt-2 pb-1 sm:px-4">
+                                            <div className="h-8 bg-gray-300 rounded mt-2"></div>
+                                            <div className="flex items-center mt-4 gap-1">
+                                                <div className="h-6 w-6 bg-gray-300 rounded-full"></div>
+                                                <div className="h-6 bg-gray-300 rounded w-32"></div>
+                                            </div>
+                                            <div className="mt-4">
+                                                <div className="h-6 bg-gray-300 rounded mb-2"></div>
+                                                <div className="h-6 bg-gray-300 rounded"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="p-2 w-full bg-gray-300 rounded-b-lg mt-4 h-10"></div>
+                                </div>
+                            ))
+                        ) : (
+                            data.slice(0, 3).map((item, index) => (
+                                <div key={index} className="w-full rounded-lg bg-green-50 hover:scale-105 transition-all flex flex-col justify-between">
+                                    <div>
+                                        <img src={item.thumbnail} layout="responsive" alt={item.title} className="rounded-t-md w-full aspect-[16/9] object-cover" />
+                                        <div className="p-2">
+                                            <div className="pt-2 pb-1 sm:px-4 ">
+                                                <p className="text-2xl font-bold text-green-800">{item.title}</p>
+                                                <div className="flex items-center mt-4 gap-1">
+                                                    <MdDateRange className="text-green-800 text-2xl font-extrabold" />
+                                                    <p className="text-green-800 font-semibold">{item.date}</p>
+                                                </div>
+                                                <p className="text-lg text-green-800 mt-4 line-clamp-2" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.content) }}></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <Link href={`/berita/${item.id}`} className="p-2 w-full  bg-green-800 rounded-b-lg text-green-100 font-semibold ">
+                                        Baca selengkapnya
+                                    </Link>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                    <div className="flex lg:mt-6  justify-end">
+                        <Link href="/berita" className=" rounded-lg text-green-800  font-semibold mt-8 flex items-end justify-end hover:scale-105 transition-all">{'LIHAT LAINNYA >'}</Link>
+                    </div>
+                </div>
+            </div >
         </>
     )
 }
