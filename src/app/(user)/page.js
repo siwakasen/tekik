@@ -52,7 +52,7 @@ export default function Page() {
                             <p className="text-4xl sm:text-6xl text-green-800 my-4 font-bold">
                                 Sekilas Mengenai Tekik
                             </p>
-                            <p className="text-xl sm:text-3xl text-gray-600 leading-relaxed font-normal">
+                            <p className="text-xl sm:text-3xl text-gray-600 leading-relaxed font-normal text-justify">
                                 Tekik terletak di Kalurahan Nglindur, Kapanewon Girisubo, Kabupaten Gunung Kidul. Tekik adalah dusun yang memiliki potensi desa yang cukup besar. Dengan kerjasama antar warga yang baik, dusun ini diharapkan dapat terus berkembang dan meningkatkan taraf hidup masyarakatnya.
                             </p>
                         </div>
@@ -126,14 +126,14 @@ export default function Page() {
                                         <div className="p-2">
                                             <div className=" pb-1 sm:px-2 ">
                                                 <p className="text-lg font-semibold text-green-900 uppercase">{item.title}</p>
-                                                <p className="text-md text-gray-700 mt-1 line-clamp-2" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.content) }}></p>
+                                                <p className="text-md text-gray-700 mt-1 line-clamp-2 font-light" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.content) }}></p>
                                                 <div className="flex items-center  gap-1">
                                                     <p className="text-gray-700 font-light text-sm mt-3">{formatDate(item.date)}</p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <Link href={`/berita/${item.id}`} className="p-2 w-full  bg-green-900 rounded-b-lg text-white font-semibold flex items-center justify-center">
+                                    <Link href={`/berita/${item.id}`} className="p-2 w-full  bg-green-700 rounded-b-lg text-white font-light flex items-center justify-center">
                                         Baca selengkapnya
                                     </Link>
                                 </div>

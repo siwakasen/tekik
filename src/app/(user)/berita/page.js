@@ -50,7 +50,7 @@ export default function Page() {
                     </Breadcrumbs>
                 </div>
                 <div className="w-full py-3 flex items-center justify-between border-b-2">
-                    <p className="font-semibold text-xl sm:text-2xl">BERITA</p>
+                    <p className="font-semibold text-xl sm:text-2xl text-green-900">BERITA</p>
                     {/* search berita */}
                     <div className="relative flex items-center ">
                         <input
@@ -109,11 +109,10 @@ export default function Page() {
                     )}
                 </div>
             </div>
-            <div className="mt-22 text-center font-light text-sm text-gray-500 p-4 sm:text-start">
+            <div className=" text-center font-light text-sm text-gray-500 p-4 sm:text-start">
                 <p className="font-bold text-gray-700 uppercase text-md">Padukuhan Tekik</p>
                 <p>Nglindur, Kecamatan Girisubo, Kabupaten Gunung Kidul,</p>
                 <p>Daerah Istimewa Yogyakarta</p>
-
             </div>
         </div>
     );

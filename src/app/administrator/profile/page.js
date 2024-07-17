@@ -123,7 +123,7 @@ export default function Page() {
     return (
         <main className="flex flex-col min-h-screen">
             <NavbarAdmin />
-            <div className='flex-grow p-2 flex flex-col shadow-inner'>
+            <div className='flex-grow p-2 flex flex-col shadow-inner max-w-screen-xl mx-auto'>
                 <form onSubmit={handleSubmit} className="flex flex-col flex-grow">
                     <div className="flex-grow p-4 flex flex-col">
                         <div className="flex-grow">
@@ -141,22 +141,8 @@ export default function Page() {
                                     required
                                 />
                             </div>
-                            <p className='w-full text-2xl my-5 font-bold'>Sejarah Padukuhan</p>
-                            <div className="h-52 mb-4 mt-2">
-                                <ReactQuill
-                                    theme="snow"
-                                    name="sejarahPadukuhan"
-                                    id="sejarahPadukuhan"
-                                    value={data.sejarahPadukuhan}
-                                    placeholder="Isi Content"
-                                    onChange={(value) => setData(prev => ({ ...prev, sejarahPadukuhan: value }))}
-                                    className="h-[90%] md:h-full"
-                                    modules={quillModules}
-                                    required
-                                />
-                            </div>
                             <p className='w-full text-2xl mb-5 mt-28 font-bold'>Struktur Organisasi</p>
-                            <div className="flex flex-wrap mx-8 rounded-md md:bg-slate-100">
+                            <div className="flex flex-wrap  rounded-lg md:bg-slate-100">
                                 {Array.from({ length: inputCount }).map((_, index) => (
                                     <label key={index} className='border-[2px] border-dashed border-stone-300 flex flex-col justify-center items-center min-h-40 w-fit min-w-40 max-w-80 rounded-2xl p-2 m-2'>
                                         {strukturOrganisasiPreview[index] ? (
