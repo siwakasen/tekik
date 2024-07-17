@@ -3,7 +3,7 @@
 import Image from "next/image"
 import Nature from "@/images/nature.jpg"
 import { MdDateRange } from "react-icons/md";
-import { collection, getDocs, doc } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/services/firebase/firebase";
 import { useEffect, useState } from "react";
 import DOMPurify from "dompurify";
@@ -23,7 +23,10 @@ export default function Page() {
     useEffect(() => {
         fetchData();
     }, []);
-
+    const formatDate = (dateString) => {
+        const options = { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' };
+        return new Date(dateString).toLocaleDateString('id-ID', options);
+    };
     return (
         <>
             <div className="h-screen relative">
@@ -92,7 +95,7 @@ export default function Page() {
                     <div className="w-full">
                         <p className="text-3xl sm:text-4xl text-green-800 mb-6  text-center font-bold">BERITA TERKINI</p>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 rounded-lg">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 rounded-lg my-6">
                         {loading ? (
                             [0, 1, 2].map((item) => (
                                 <div key={item} className="w-full rounded-lg bg-gray-100 animate-pulse">
@@ -114,22 +117,23 @@ export default function Page() {
                                 </div>
                             ))
                         ) : (
-                            data.slice(0, 3).map((item, index) => (
-                                <div key={index} className="w-full rounded-lg bg-green-50 hover:scale-105 transition-all flex flex-col justify-between">
+                            data.map((item, index) => (
+                                <div key={index} className="w-full rounded-lg hover:scale-105  group transition-all flex flex-col justify-between">
                                     <div>
-                                        <img src={item.thumbnail} layout="responsive" alt={item.title} className="rounded-t-md w-full aspect-[16/9] object-cover" />
+                                        <div className="overflow-hidden">
+                                            <img src={item.thumbnail} layout="responsive" alt={""} className="rounded-t-md w-full aspect-[10/4] object-cover group-hover:scale-110 group-hover:rotate-2 transition-transform" />
+                                        </div>
                                         <div className="p-2">
-                                            <div className="pt-2 pb-1 sm:px-4 ">
-                                                <p className="text-2xl font-bold text-green-800">{item.title}</p>
-                                                <div className="flex items-center mt-4 gap-1">
-                                                    <MdDateRange className="text-green-800 text-2xl font-extrabold" />
-                                                    <p className="text-green-800 font-semibold">{item.date}</p>
+                                            <div className=" pb-1 sm:px-2 ">
+                                                <p className="text-lg font-semibold text-green-900 uppercase">{item.title}</p>
+                                                <p className="text-md text-gray-700 mt-1 line-clamp-2" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.content) }}></p>
+                                                <div className="flex items-center  gap-1">
+                                                    <p className="text-gray-700 font-light text-sm mt-3">{formatDate(item.date)}</p>
                                                 </div>
-                                                <p className="text-lg text-green-800 mt-4 line-clamp-2" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.content) }}></p>
                                             </div>
                                         </div>
                                     </div>
-                                    <Link href={`/berita/${item.id}`} className="p-2 w-full  bg-green-800 rounded-b-lg text-green-100 font-semibold ">
+                                    <Link href={`/berita/${item.id}`} className="p-2 w-full  bg-green-900 rounded-b-lg text-white font-semibold flex items-center justify-center">
                                         Baca selengkapnya
                                     </Link>
                                 </div>
