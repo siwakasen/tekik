@@ -65,7 +65,7 @@ export default function Page({ params }) {
                                 </div>
 
                                 <div className="my-3 border-b-2 border-green-800 ">
-                                    <p className="font-bold text-2xl border-b-4 inline-block border-green-800 pe-2 text-green-800">Lampiran</p>
+                                    <p className="font-semibold uppercase font-mono text-2xl border-b-4 inline-block border-green-800 pe-2 text-green-800">Lampiran</p>
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                                     {
