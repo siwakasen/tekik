@@ -16,7 +16,7 @@ import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure
 
 import NavbarAdmin from "@/components/navbar/navbar-admin";
 import { useRouter } from "next/navigation";
-import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
+import { collection, getDocs, deleteDoc, doc, orderBy, query } from "firebase/firestore";
 import { db } from "@/services/firebase/firebase";
 import { useEffect, useState } from "react";
 import { Image } from "@nextui-org/react";
@@ -31,12 +31,11 @@ export default function Page() {
     const [id, setID] = useState(null);
     const [thumbnail, setThumbnail] = useState(null);
     const [lampiran, setLampiran] = useState([]);
-    const q = collection(db, "articles");
+    const q = query(collection(db, "articles"), orderBy("date", "desc"));
     const router = useRouter();
 
     const fetchData = async () => {
         const querySnapshot = await getDocs(q);
-        console.log(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
         setData(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     }
 

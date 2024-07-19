@@ -3,16 +3,17 @@
 import Image from "next/image"
 import Gambar from "@/images/gambar.jpg"
 import Square from "@/images/square.png"
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
 import { db } from "@/services/firebase/firebase";
 import { useEffect, useState } from "react";
 import DOMPurify from "dompurify";
 import { Link } from "@nextui-org/react";
 
 export default function Page() {
-    const q = collection(db, "articles");
+    const q = query(collection(db, "articles"), orderBy("date", "desc"), limit(3));
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
+
     const fetchData = async () => {
         const querySnapshot = await getDocs(q);
         setData(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
@@ -22,10 +23,12 @@ export default function Page() {
     useEffect(() => {
         fetchData();
     }, []);
+
     const formatDate = (dateString) => {
         const options = { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' };
         return new Date(dateString).toLocaleDateString('id-ID', options);
     };
+
     return (
         <>
             <div className="h-screen relative">

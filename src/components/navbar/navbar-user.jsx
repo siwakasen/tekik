@@ -14,8 +14,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 export default function NavbarUser() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const router = useRouter();
-    const pathname = usePathname();
     return (
         <Navbar onMenuOpenChange={setIsMenuOpen} className="sticky top-0 " isBlurred={false}>
             <NavbarContent>
