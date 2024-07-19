@@ -1,8 +1,8 @@
 "use client"
 
 import Image from "next/image"
-import Nature from "@/images/nature.jpg"
-import { MdDateRange } from "react-icons/md";
+import Gambar from "@/images/gambar.jpg"
+import Square from "@/images/square.png"
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/services/firebase/firebase";
 import { useEffect, useState } from "react";
@@ -15,7 +15,6 @@ export default function Page() {
     const [loading, setLoading] = useState(true);
     const fetchData = async () => {
         const querySnapshot = await getDocs(q);
-        console.log(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
         setData(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
         setLoading(false);
     }
@@ -30,7 +29,7 @@ export default function Page() {
     return (
         <>
             <div className="h-screen relative">
-                <Image src={Nature} layout="fill" objectFit="cover" alt="dashboard" />
+                <Image src={Gambar} layout="fill" objectFit="cover" alt="dashboard" />
                 <div className="absolute inset-0 bg-black opacity-20"></div>
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white "></div>
                 <div className="absolute inset-0 flex flex-col justify-center items-center">
@@ -59,7 +58,7 @@ export default function Page() {
                         <div className="w-full flex  justify-center">
                             <div className="relative flex justify-center items-center w-[350px] h-[350px] sm:w-[400px] sm:h-[400px] sm:ml-16 ">
                                 <div className=" absolute top-[80px] sm:left-[80px] left-4 w-full sm:w-[600px] sm:max-w-[600px] overflow-hidden h-[350px] sm:h-[540px] bg-green-100 z-0"></div>
-                                <Image src={Nature} layout="fill" objectFit="cover" alt="dashboard" />
+                                <Image src={Square} layout="fill" objectFit="cover" alt="dashboard" />
                             </div>
                         </div>
                     </div>
