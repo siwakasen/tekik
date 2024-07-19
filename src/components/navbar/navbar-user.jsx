@@ -17,7 +17,7 @@ export default function NavbarUser() {
     const router = useRouter();
     const pathname = usePathname();
     return (
-        <Navbar onMenuOpenChange={setIsMenuOpen} className="sticky top-0 ">
+        <Navbar onMenuOpenChange={setIsMenuOpen} className="sticky top-0 " isBlurred={false}>
             <NavbarContent>
                 <NavbarMenuToggle
                     aria-label={isMenuOpen ? "Close menu" : "Open menu"}
