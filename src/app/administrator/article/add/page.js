@@ -79,7 +79,6 @@ const FormPage = () => {
             }
 
             let lampiranUrl = [];
-            console.log(lampiran);
             for (let i = 0; i < lampiran.length; i++) {
                 const folder = 'attachment/';
                 const imagePath = await uploadFile(lampiran[i], folder);

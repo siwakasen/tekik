@@ -1,14 +1,14 @@
 "use client";
 import { Breadcrumbs, BreadcrumbItem } from "@nextui-org/react";
 import { AiOutlineSearch } from "react-icons/ai";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { db } from "@/services/firebase/firebase";
 import { useEffect, useState } from "react";
 import DOMPurify from "dompurify";
 import { Link } from "@nextui-org/react";
 
 export default function Page() {
-    const q = collection(db, "articles");
+    const q = query(collection(db, "articles"), orderBy("date", "desc"));
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchInput, setSearchInput] = useState("");
