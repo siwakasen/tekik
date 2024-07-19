@@ -4,7 +4,7 @@ import NavbarAdmin from "@/components/navbar/navbar-admin";
 import { useState, useEffect } from "react";
 import { doc, getDoc, updateDoc, arrayRemove } from "firebase/firestore";
 import { db } from "@/services/firebase/firebase";
-import { Button, Spinner, Image } from '@nextui-org/react';
+import { Button, Spinner, Image, Input } from '@nextui-org/react';
 import { quillModules } from '@/components/constant/constant';
 import 'react-quill/dist/quill.snow.css';
 import { toast } from 'sonner';
@@ -20,10 +20,12 @@ export default function Page() {
 
     const [isLoading, setIsLoading] = useState(false);
     const [data, setData] = useState({});
+    const [dataPenduduk, setDataPenduduk] = useState([]);
     const [strukturOrganisasiPreview, setStrukturOrganisasiPreview] = useState([]);
     const [strukturOrganisasi, setStrukturOrganisasi] = useState([]);
     const [inputCount, setInputCount] = useState(1);
     const docRef = doc(db, "profile", process.env.NEXT_PUBLIC_PROFILE_ID);
+    const docRefPenduduk = doc(db, "profile", process.env.NEXT_PUBLIC_KEPENDUDUKAN_ID);
 
     const handleImageChange = (e, index) => {
         const files = Array.from(e.target.files);
@@ -66,7 +68,6 @@ export default function Page() {
             });
 
         } else {
-            const docRef = doc(db, "profile", process.env.NEXT_PUBLIC_PROFILE_ID);
             try {
                 await updateDoc(docRef, {
                     strukturOrganisasi: arrayRemove(data)
@@ -83,12 +84,16 @@ export default function Page() {
     useEffect(() => {
         const fetchProfile = async () => {
             const querySnap = await getDoc(docRef);
+            const querySnapPenduduk = await getDoc(docRefPenduduk);
             if (querySnap.exists()) {
                 setData(querySnap.data());
                 if (querySnap.data().strukturOrganisasi) {
                     setStrukturOrganisasiPreview(querySnap.data().strukturOrganisasi);
                     setInputCount(querySnap.data().strukturOrganisasi.length + 1);
                 }
+            }
+            if (querySnapPenduduk.exists()) {
+                setDataPenduduk(querySnapPenduduk.data());
             }
             setLoading(false);
         }
@@ -112,6 +117,7 @@ export default function Page() {
 
             const updatedData = { ...data, strukturOrganisasi: imageUrl };
             await updateDoc(docRef, updatedData);
+            await updateDoc(docRefPenduduk, { ...dataPenduduk });
             toast.success('Data berhasil disimpan');
         } catch (error) {
             toast.error(error.message);
@@ -140,6 +146,41 @@ export default function Page() {
                                     modules={quillModules}
                                     required
                                 />
+                            </div>
+                            <p className='w-full text-2xl mb-5 mt-28 font-bold'>Data Kependudukan</p>
+                            <div>
+                                <div className='my-4 grid grid-cols-1 sm:grid-cols-3 gap-3'>
+                                    <Input
+                                        type="number"
+                                        label='Jumlah RW'
+                                        labelPlacement="outside"
+                                        placeholder="0"
+                                        name="rw"
+                                        value={dataPenduduk.jumlahRW}
+                                        onChange={(e) => setDataPenduduk(prev => ({ ...prev, jumlahRW: e.target.value }))}
+                                        isRequired
+                                    />
+                                    <Input
+                                        type="number"
+                                        label='Jumlah RT'
+                                        labelPlacement="outside"
+                                        placeholder="0"
+                                        name="rt"
+                                        value={dataPenduduk.jumlahRT}
+                                        onChange={(e) => setDataPenduduk(prev => ({ ...prev, jumlahRT: e.target.value }))}
+                                        isRequired
+                                    />
+                                    <Input
+                                        type="number"
+                                        label='Jumlah Penduduk'
+                                        labelPlacement="outside"
+                                        placeholder="0"
+                                        name="jmlPenduduk"
+                                        value={dataPenduduk.jumlahPenduduk}
+                                        onChange={(e) => setDataPenduduk(prev => ({ ...prev, jumlahPenduduk: e.target.value }))}
+                                        isRequired
+                                    />
+                                </div>
                             </div>
                             <p className='w-full text-2xl mb-5 mt-28 font-bold'>Struktur Organisasi</p>
                             <div className="flex flex-wrap  rounded-lg md:bg-slate-100">

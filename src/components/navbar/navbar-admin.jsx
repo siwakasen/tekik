@@ -30,7 +30,9 @@ export default function NavbarAdmin() {
                     className="sm:hidden"
                 />
                 <NavbarBrand>
-                    <p className="font-bold text-inherit">TEKIK</p>
+                    <Link href="/" className="text-black">
+                        <p className="font-bold text-inherit text-lg text-black">TEKIK</p>
+                    </Link>
                 </NavbarBrand>
             </NavbarContent>
             <NavbarContent className="hidden sm:flex gap-4" justify="center">
