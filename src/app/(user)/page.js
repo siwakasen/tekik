@@ -39,7 +39,7 @@ export default function Page() {
                     <p className="text-white text-4xl sm:text-5xl md:text-7xl mx-4 lg:text-8xl font-bold text-center" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)' }}>
                         PADUKUHAN TEKIK
                     </p>
-                    <p className="text-white text-xl lg:text-2xl my-6 font-bold text-center" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)' }}>
+                    <p className="text-white px-2 text-xl lg:text-2xl my-6 font-bold text-center" style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)' }}>
                         Kalurahan Nglindur, Kapanewon Girisubo, Kabupaten Gunung Kidul
                     </p>
                 </div>
@@ -51,7 +51,7 @@ export default function Page() {
                             <p className="text-4xl sm:text-6xl text-green-800 my-4 font-bold">
                                 Sekilas Mengenai Tekik
                             </p>
-                            <p className="text-xl sm:text-3xl text-gray-600 leading-relaxed font-normal text-justify">
+                            <p className="text-lg sm:text-3xl text-gray-600 leading-relaxed font-normal text-justify">
                                 Tekik terletak di Kalurahan Nglindur, Kapanewon Girisubo, Kabupaten Gunung Kidul. Tekik adalah dusun yang memiliki potensi desa yang cukup besar. Dengan kerjasama antar warga yang baik, dusun ini diharapkan dapat terus berkembang dan meningkatkan taraf hidup masyarakatnya.
                             </p>
                         </div>
@@ -82,7 +82,7 @@ export default function Page() {
                     </div>
                     <div className="flex flex-col rounded-lg bg-green-50 px-auto py-8 text-center">
                         <p className="text-center text-green-600 text-4xl font-extrabold">
-                            90
+                            128
                         </p>
                         <p className="text-center text-gray-500 font-medium text-lg">
                             Jumlah Penduduk

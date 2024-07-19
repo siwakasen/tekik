@@ -16,7 +16,6 @@ export default function Page() {
         const fetchProfile = async () => {
             const querySnap = await getDoc(docRef);
             if (querySnap.exists()) {
-                console.log(querySnap.data());
                 setData(querySnap.data());
             }
             setLoading(false);
@@ -84,7 +83,7 @@ export default function Page() {
                                 {
                                     data.strukturOrganisasi.map((item, index) => (
                                         <div key={index} className="relative ">
-                                            <img src={item} layout="responsive" alt={""} className="sm:h-full rounded-md w-full aspect-video object-cover transition-transform" />
+                                            <img src={item} layout="responsive" alt={""} className="sm:h-full rounded-md w-full  object-cover transition-transform" />
                                         </div>
                                     ))
                                 }
