@@ -56,7 +56,7 @@ export default function Page() {
                         <input
                             type="text"
                             placeholder="Cari berita..."
-                            className="px-2 py-2 border border-gray-300 rounded-lg text-xs sm:text-[14px]  ml-4 w-[100px] sm:w-full  focus:outline-none"
+                            className="px-2 py-2 border border-gray-300 rounded-lg text-md sm:text-lg  ml-4 w-[150px] sm:w-full  focus:outline-none"
                             onChange={(e) => setSearchInput(e.target.value)}
                         />
                         <AiOutlineSearch className="text-gray-500 sm:size-6 relative right-7" />
