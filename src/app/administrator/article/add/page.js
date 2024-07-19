@@ -1,5 +1,5 @@
 "use client";
-import { Input, Button, Text, Image, Card, CardHeader, Divider, CardBody } from '@nextui-org/react';
+import { Input, Button, Image, Card, CardHeader, Divider, CardBody } from '@nextui-org/react';
 import dynamic from 'next/dynamic';
 import { MdImage } from "react-icons/md";
 import { useEffect, useState } from 'react';
@@ -14,8 +14,6 @@ import { useRouter } from 'next/navigation';
 import { quillModules } from '@/components/constant/constant';
 import { Spinner } from '@nextui-org/react';
 import { MdClose } from "react-icons/md";
-import { ref, deleteObject } from 'firebase/storage';
-import { arrayRemove, updateDoc, doc } from 'firebase/firestore';
 
 const FormPage = () => {
     const router = useRouter();
