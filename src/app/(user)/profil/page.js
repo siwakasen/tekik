@@ -92,8 +92,8 @@ export default function Page() {
                                 <p className="font-mono uppercase  text-2xl sm:text-3xl border-b-4 inline-block border-green-800 pe-2 text-green-800">Lokasi Padukuhan</p>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <Image src={Denah} layout="responsive" className="w-full h-full min-h-[600px]" objectFit="cover" alt="dashboard" />
-                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1554.2729537097596!2d110.76072302979117!3d-8.15023426237121!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7bc7002e36ef07%3A0x37a0be507115eb60!2sPadukuhan%20Tekik!5e1!3m2!1sid!2sid!4v1721368960581!5m2!1sid!2sid" className="border-0 w-full h-full min-h-[600px]" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                                <Image src={Denah} layout="responsive" className="w-full h-full" objectFit="cover" alt="dashboard" />
+                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1554.2729537097596!2d110.76072302979117!3d-8.15023426237121!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7bc7002e36ef07%3A0x37a0be507115eb60!2sPadukuhan%20Tekik!5e1!3m2!1sid!2sid!4v1721368960581!5m2!1sid!2sid" className="border-0 w-full h-full" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                             </div>
                         </>
                 }
