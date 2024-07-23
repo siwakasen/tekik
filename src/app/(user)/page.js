@@ -101,8 +101,8 @@ export default function Page() {
                             </p>
                         </motion.div>
                         <motion.div className="w-full flex justify-center" initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 1 }}>
-                            <div className="relative flex justify-center items-center w-[350px] h-[350px] sm:w-[400px] sm:h-[400px] sm:ml-16 ">
-                                <div className="absolute top-[80px] sm:left-[80px] left-4 w-full sm:w-[600px] sm:max-w-[600px] overflow-hidden h-[350px] sm:h-[540px] bg-green-100 z-0"></div>
+                            <div className="relative flex justify-center items-center w-[350px] h-[350px] sm:w-[400px] sm:h-[400px] sm:ml-16 overflow-visible">
+                                <div className="absolute top-[80px] sm:left-[80px] left-4 w-full sm:w-full  overflow-hidden h-full  bg-green-100 z-0"></div>
                                 <Image src={Square} layout="fill" objectFit="cover" alt="dashboard" />
                             </div>
                         </motion.div>
